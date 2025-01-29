@@ -1,135 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://apis.google.com https://accounts.google.com; style-src 'self' 'unsafe-inline';">
-
-  <title>Cadastro de Clientes</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    label { display: block; margin-bottom: 8px; }
-    input, select { width: 100%; padding: 8px; margin-bottom: 15px; }
-    button { padding: 10px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-    button:hover { background-color: #45a049; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://apis.google.com https://accounts.google.com;">
+    <title>Cadastro de Cliente</title>
 </head>
 <body>
-  <h1>Cadastro de Clientes</h1>
-  <form id="clientForm">
-    <label for="clientName">Nome do Cliente</label>
-    <input type="text" id="clientName" name="clientName" required />
+    <h1>Cadastro de Cliente</h1>
 
-    <label for="clientPhone">Telefone do Cliente</label>
-    <input type="text" id="clientPhone" name="clientPhone" required />
+    <form id="cadastroForm">
+        <label for="nome">Nome do Cliente:</label>
+        <input type="text" id="nome" name="nome" required><br><br>
 
-    <label for="purpose">Finalidade</label>
-    <select id="purpose" name="purpose" required>
-      <option value="comprar">Comprar</option>
-      <option value="vender">Vender</option>
-      <option value="locar">Locar</option>
-      <option value="procurar locação">Procurar Locação</option>
-    </select>
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" name="telefone" required><br><br>
 
-    <label for="brokerName">Nome do Corretor</label>
-    <input type="text" id="brokerName" name="brokerName" required />
+        <label for="finalidade">Finalidade:</label>
+        <select id="finalidade" name="finalidade" required>
+            <option value="comprar">Comprar</option>
+            <option value="vender">Vender</option>
+            <option value="locar">Locar</option>
+            <option value="procura locação">Procurar Locação</option>
+        </select><br><br>
 
-    <label for="registrationDate">Data de Cadastro</label>
-    <input type="date" id="registrationDate" name="registrationDate" required />
+        <label for="corretor">Nome do Corretor:</label>
+        <input type="text" id="corretor" name="corretor" required><br><br>
 
-    <button type="submit">Cadastrar Cliente</button>
-  </form>
+        <button type="submit">Cadastrar</button>
+    </form>
 
-  <script src="https://apis.google.com/js/api.js"></script>
-  <script>
-    // Substitua pelos seus dados do OAuth
-    const CLIENT_ID = '229547705481-3d6hsnjgrs0fr7pcq6oie0ob5l6te160.apps.googleusercontent.com';
-    const API_KEY = 'AIzaSyD0QZxWNf7ZEFSuHrNNDmVqNm5CAV_RGWU';
-    const SHEET_ID = '1hiPiUiraXNMrk_OETHszG9NK6bAD5evZvQq5zP7BmHo';
-
-    let gapiLoaded = false;
-
-    // Função para carregar o cliente Google API
-    function loadClient() {
-      gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        scope: 'https://www.googleapis.com/auth/spreadsheets',
-        discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
-      }).then(function () {
-        console.log('Google API carregada com sucesso!');
-        gapiLoaded = true;
-      }).catch(function (error) {
-        console.error('Erro ao carregar Google API', error);
-        alert("Erro ao carregar Google API");
-      });
-    }
-
-    // Função para autenticar com OAuth
-    function authenticate() {
-      return gapi.auth2.getAuthInstance()
-        .signIn({scope: "https://www.googleapis.com/auth/spreadsheets"})
-        .then(function () {
-          console.log("Autenticado com sucesso!");
-        }).catch(function (error) {
-          console.error('Erro na autenticação', error);
-          alert("Erro na autenticação");
-        });
-    }
-
-    // Função para enviar dados à planilha
-    function appendDataToSheet(data) {
-      const request = gapi.client.sheets.spreadsheets.values.append({
-        spreadsheetId: SHEET_ID,
-        range: 'Sheet1!A1:E1',
-        valueInputOption: 'RAW',
-        resource: {
-          values: [
-            [data.clientName, data.clientPhone, data.purpose, data.brokerName, data.registrationDate]
-          ]
-        }
-      });
-
-      request.then(function (response) {
-        alert('Cliente cadastrado com sucesso!');
-        console.log('Resposta da API:', response);
-      }, function (error) {
-        alert('Erro ao cadastrar cliente!');
-        console.error('Erro ao enviar para API:', error);
-      });
-    }
-
-    // Espera o carregamento da API e autentica antes de fazer requisição
-    document.getElementById('clientForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const formData = {
-        clientName: document.getElementById('clientName').value,
-        clientPhone: document.getElementById('clientPhone').value,
-        purpose: document.getElementById('purpose').value,
-        brokerName: document.getElementById('brokerName').value,
-        registrationDate: document.getElementById('registrationDate').value,
-      };
-
-      if (gapiLoaded) {
-        authenticate().then(function () {
-          gapi.client.load('sheets', 'v4', function () {
-            appendDataToSheet(formData);
-          });
-        });
-      } else {
-        alert('Google API não carregada corretamente!');
-      }
-    });
-
-    // Carrega a API do Google
-    function start() {
-      gapi.load('client:auth2', function () {
-        loadClient();
-      });
-    }
-
-    start();
-  </script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
